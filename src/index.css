@@ -265,20 +265,27 @@ footer {
 /* Global Mobile Responsiveness */
 @media (max-width: 768px) {
   .container {
-    padding: 0 20px;
+    padding: 0 16px;
   }
 
   .navbar .container {
-    flex-direction: column;
-    height: auto;
-    padding: 16px 20px;
-    gap: 16px;
+    flex-direction: row;
+    height: 60px;
+    padding: 0 16px;
+    gap: 8px;
   }
 
   .nav-links {
-    width: 100%;
-    justify-content: center;
-    gap: 16px;
+    width: auto;
+    gap: 12px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+  }
+
+  .logo {
+    font-size: 16px;
   }
 
   .footer-content {

@@ -260,20 +260,20 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .hero {
-    padding: 60px 0 40px;
+    padding: 40px 0 30px;
   }
   .hero-title {
-    font-size: 38px;
+    font-size: 32px;
   }
   .hero-subtitle {
-    font-size: 15px;
-    margin-bottom: 32px;
+    font-size: 14px;
+    margin-bottom: 24px;
   }
   .search-form {
     flex-direction: column;
     border-radius: 16px;
-    padding: 16px;
-    gap: 16px;
+    padding: 12px;
+    gap: 12px;
   }
   .search-input {
     width: 100%;
@@ -284,10 +284,27 @@
     border-radius: 12px;
   }
   .marquee-wrapper {
-    width: 400vw;
+    width: 500vw;
   }
   .results-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .track-info {
+    padding: 12px;
+  }
+  .track-title {
+    font-size: 14px;
+  }
+  .track-artist {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .meta-duration {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+  .meta-item {
+    font-size: 10px;
   }
 }
