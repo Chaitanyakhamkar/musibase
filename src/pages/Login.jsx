@@ -1,0 +1,148 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase';
+import { Music, AlertCircle } from 'lucide-react';
+import './Login.css';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
+
+  const switchTab = (toSignUp) => {
+    setIsSignUp(toSignUp);
+    setShowOtpInput(false);
+    setError(null);
+  };
+
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      if (isSignUp) {
+        if (!showOtpInput) {
+          const { error } = await supabase.auth.signUp({ email, password });
+          if (error) throw error;
+          setShowOtpInput(true);
+        } else {
+          const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'signup' });
+          if (error) throw error;
+          navigate('/');
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.message || 'An error occurred during authentication.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="login-page">
+      <div className="bg-glow"></div>
+      <div className="container login-container">
+        
+        <div className="login-card glass-panel">
+          <div className="login-header">
+            <div className="logo-circle" style={{ margin: '0 auto 16px' }}>
+              <Music size={20} strokeWidth={3} />
+            </div>
+            
+            <div className="auth-tabs" style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: '24px' }}>
+              <button 
+                type="button" 
+                onClick={() => switchTab(false)}
+                style={{ flex: 1, padding: '12px', background: 'transparent', border: 'none', color: !isSignUp ? '#fff' : 'var(--text-muted)', borderBottom: !isSignUp ? '2px solid var(--primary-color)' : '2px solid transparent', cursor: 'pointer', fontSize: '15px', fontWeight: 600, transition: 'all 0.2s ease' }}
+              >
+                Log In
+              </button>
+              <button 
+                type="button" 
+                onClick={() => switchTab(true)}
+                style={{ flex: 1, padding: '12px', background: 'transparent', border: 'none', color: isSignUp ? '#fff' : 'var(--text-muted)', borderBottom: isSignUp ? '2px solid var(--primary-color)' : '2px solid transparent', cursor: 'pointer', fontSize: '15px', fontWeight: 600, transition: 'all 0.2s ease' }}
+              >
+                Register via Email
+              </button>
+            </div>
+
+            <h2>{isSignUp ? 'Create an Account' : 'Welcome Back'}</h2>
+            <p className="login-subtitle">
+              {isSignUp ? 'Sign up securely with your email address to save music.' : 'Sign in to access your favorites and playlists.'}
+            </p>
+          </div>
+
+          <form onSubmit={handleAuth} className="login-form">
+            {error && (
+              <div className="error-message">
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+            
+            {showOtpInput ? (
+              <div className="input-group">
+                <label className="input-label">Enter 6-Digit Verification Code</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  placeholder="123456"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  style={{ letterSpacing: '8px', textAlign: 'center', fontSize: '20px', padding: '16px' }}
+                  required
+                />
+                <p style={{fontSize: '13px', color: 'var(--primary-color)', marginTop: '8px', textAlign: 'center'}}>
+                  Check your email for the OTP!
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="input-group">
+                  <label className="input-label">Email address</label>
+                  <input 
+                    type="email" 
+                    className="input-field" 
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div className="input-group">
+                  <label className="input-label">Password</label>
+                  <input 
+                    type="password" 
+                    className="input-field" 
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </>
+            )}
+
+            <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
+              {loading ? <div className="loader" style={{width:'18px',height:'18px',margin:'0 auto'}}></div> : (showOtpInput ? 'Verify & Create Account' : (isSignUp ? 'Sign Up' : 'Sign In'))}
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default Login;
