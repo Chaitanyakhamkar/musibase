@@ -47,6 +47,26 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError('Please enter your email address first to reset your password.');
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password',
+      });
+      if (error) throw error;
+      alert('Check your email for a password reset link!');
+    } catch (err) {
+      setError(err.message || 'Error sending password reset link.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="login-page">
       <div className="bg-glow"></div>
@@ -120,7 +140,19 @@ const Login = () => {
                 </div>
                 
                 <div className="input-group">
-                  <label className="input-label">Password</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label className="input-label" style={{ marginBottom: 0 }}>Password</label>
+                    {!isSignUp && (
+                      <button 
+                         type="button" 
+                         className="btn-ghost" 
+                         style={{ fontSize: '13px', padding: 0, color: 'var(--primary-color)', border: 'none', background: 'none', cursor: 'pointer' }}
+                         onClick={handleForgotPassword}
+                      >
+                         Forgot Password?
+                      </button>
+                    )}
+                  </div>
                   <input 
                     type="password" 
                     className="input-field" 
