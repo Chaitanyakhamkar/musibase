@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Music, LogIn, LogOut } from 'lucide-react';
+import { Music, LogIn, LogOut, User } from 'lucide-react';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { useAuth } from '../AuthContext';
@@ -31,9 +31,14 @@ const Navbar = () => {
           <Link to="/" className="nav-link">Home</Link>
           <a href="#" className="nav-link">About</a>
           {user ? (
-            <button onClick={handleSignOut} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: '13px' }}>
-              <LogOut size={14} style={{marginRight: '6px'}} /> Sign Out
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <Link to="/profile" className="nav-link" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <User size={16} /> Profile
+              </Link>
+              <button onClick={handleSignOut} className="btn btn-ghost" style={{ padding: '6px 12px', fontSize: '13px' }}>
+                <LogOut size={14} style={{marginRight: '6px'}} /> Sign Out
+              </button>
+            </div>
           ) : (
             <button onClick={() => navigate('/login')} className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }}>
               <LogIn size={14} style={{marginRight: '6px'}} /> Sign In

@@ -3,13 +3,15 @@ import { db, auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, orderBy, addDoc } from 'firebase/firestore';
 import { useAuth } from '../AuthContext';
+import { usePlayer } from '../PlayerContext';
 import { useNavigate } from 'react-router-dom';
-import { User, LogOut, Settings, ListMusic, Heart, PlayCircle, Music } from 'lucide-react';
+import { User, LogOut, Settings, ListMusic, Heart, PlayCircle, Pause, Music } from 'lucide-react';
 import './Profile.css';
 
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { playTrack, currentTrack, isPlaying } = usePlayer();
   
   const [profile, setProfile] = useState({ display_name: '', avatar_url: '' });
   const [playlists, setPlaylists] = useState([]);
@@ -232,7 +234,16 @@ const Profile = () => {
                       <div className="track-row-artist">{song.artist_name}</div>
                     </div>
                     <div className="track-row-genre badge">{song.genre || 'Music'}</div>
-                    <button className="btn btn-primary rounded-circle" style={{padding: '8px', borderRadius: '50%'}}><PlayCircle size={20}/></button>
+                    <button 
+                      className="btn btn-primary rounded-circle" 
+                      style={{padding: '8px', borderRadius: '50%'}}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playTrack(song);
+                      }}
+                    >
+                      {currentTrack?.track_id === song.track_id && isPlaying ? <Pause size={20}/> : <PlayCircle size={20}/>}
+                    </button>
                   </div>
                 )) : (
                   <div className="empty-state">

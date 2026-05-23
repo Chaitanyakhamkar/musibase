@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, Disc, User, Calendar, Tag, PlayCircle, Globe, Languages, Loader, Edit2, Save, X, Heart, ListMusic } from 'lucide-react';
+import { ArrowLeft, Clock, Disc, User, Calendar, Tag, PlayCircle, Pause, Globe, Languages, Loader, Edit2, Save, X, Heart, ListMusic } from 'lucide-react';
 import { useAuth } from '../AuthContext';
+import { usePlayer } from '../PlayerContext';
 import { db } from '../firebase';
 import { doc, setDoc, deleteDoc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion } from 'firebase/firestore';
 import './SongDetails.css';
@@ -11,6 +12,7 @@ const SongDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { playTrack, currentTrack, isPlaying } = usePlayer();
   
   const [track, setTrack] = useState(location.state?.track || null);
   const [lyrics, setLyrics] = useState(null);
@@ -198,6 +200,7 @@ const SongDetails = () => {
           artist_name: track.artistName,
           genre: track.primaryGenreName,
           artwork_url: track.artworkUrl100?.replace('100x100', '300x300'),
+          preview_url: track.previewUrl || null,
           liked_at: new Date().toISOString()
         });
         setIsLiked(true);
@@ -218,7 +221,8 @@ const SongDetails = () => {
           track_id: String(track.trackId),
           track_name: track.trackName,
           artist_name: track.artistName,
-          artwork_url: track.artworkUrl100?.replace('100x100', '300x300')
+          artwork_url: track.artworkUrl100?.replace('100x100', '300x300'),
+          preview_url: track.previewUrl || null
         })
       });
       alert('Added to playlist successfully!');
@@ -398,11 +402,15 @@ const SongDetails = () => {
             </div>
 
             {track.previewUrl && (
-              <div className="audio-player-container">
-                <p className="audio-label"><PlayCircle size={16} style={{display: 'inline', verticalAlign: 'middle', marginRight: '6px'}}/> Listen to Preview</p>
-                <audio controls src={track.previewUrl} className="audio-player">
-                  Your browser does not support the audio element.
-                </audio>
+              <div className="audio-player-container" style={{ marginTop: '24px' }}>
+                <button 
+                  onClick={() => playTrack(track)} 
+                  className="btn btn-primary" 
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: '30px' }}
+                >
+                  {currentTrack?.trackId === track.trackId && isPlaying ? <Pause size={20} fill="#000" /> : <PlayCircle size={20} />}
+                  {currentTrack?.trackId === track.trackId && isPlaying ? 'Pause Preview' : 'Play Preview'}
+                </button>
               </div>
             )}
             
